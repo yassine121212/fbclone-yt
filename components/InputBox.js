@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/alt-text */
 import React from "react";
 import { useState } from "react";
@@ -6,8 +7,19 @@ import { useSession } from "next-auth/client";
 import { EmojiHappyIcon } from "@heroicons/react/outline";
 import { CameraIcon, VideoCameraIcon } from "@heroicons/react/solid";
 import { useRef } from "react";
-import { db } from "../firebase";
-import { getFirestore, collection, addDoc } from "firebase/firestore/lite";
+import { db, storage } from "../firebase";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  setDoc,
+} from "firebase/firestore/lite";
+import {
+  getStorage,
+  ref,
+  uploadString,
+  getDownloadURL,
+} from "firebase/storage";
 
 function InputBox() {
   const [session] = useSession();
@@ -23,9 +35,27 @@ function InputBox() {
         name: session.user.name,
         email: session.user.email,
         image: session.user.image,
-      });
+      }).then((docRef) => {
+        if (imageToPost) {
+          // Get a reference to the storage service on Firebase Storage
+          const storage = getStorage();
+          // Create a storage reference form storage service
+          const storageRef = ref(storage, `posts/${docRef.id}`);
 
-      console.log("Document written with ID: ", docRef.id);
+          const uploadTask = uploadString(
+            storageRef,
+            imageToPost,
+            "data_url"
+          ).then((snapshot) => {
+            getDownloadURL(storageRef).then((downloadURL) => {
+              setDoc(docRef, { postImage: downloadURL }, { merge: true });
+            });
+          });
+
+          console.log("uploaded");
+          removeImage();
+        }
+      });
     } catch (e) {
       console.error("Error adding document: ", e);
     }
@@ -34,14 +64,21 @@ function InputBox() {
   };
 
   const addImageToPost = (e) => {
-    const reader = FileReader();
+    const reader = new FileReader();
     if (e.target.files[0]) {
-      reader.readAsDefaultURL(e.target.files[0]);
+      reader.readAsDataURL(e.target.files[0]);
     }
-
+    reader.onerror = () => {
+      console.log(reader.error);
+    };
     reader.onload = (readerEvent) => {
       setImageToPost(readerEvent.target.result);
     };
+    console.log(setImageToPost);
+  };
+
+  const removeImage = () => {
+    setImageToPost(null);
   };
 
   return (
@@ -65,6 +102,16 @@ function InputBox() {
             Submit
           </button>
         </form>
+
+        {imageToPost && (
+          <div
+            onClick={removeImage}
+            className='flex flex-col filter hover:brightness-100 transition duration-150 transform hover:scale-105 cursor-pointer'
+          >
+            <img className='h-10 object-contain' src={imageToPost} alt='' />
+            <p className='text-xs text-red-500 text-center'>Remove</p>
+          </div>
+        )}
       </div>
       <div
         className='flex justify-evenly'
