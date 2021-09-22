@@ -1,6 +1,7 @@
 import React from "react";
 import Stories from "./Stories";
 import InputBox from "./InputBox";
+import Posts from "./Posts";
 import { useSession } from "next-auth/client";
 
 function Feed() {
@@ -10,6 +11,7 @@ function Feed() {
         {/* Stories */}
         <Stories />
         <InputBox />
+        <Posts />
       </div>
     </div>
   );

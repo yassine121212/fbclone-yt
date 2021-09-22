@@ -1,7 +1,5 @@
-import firebase from "./firebase";
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore/lite";
-import { getStorage } from "firebase/storage";
+import firebase from "firebase";
+import "firebase/storage";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -18,12 +16,11 @@ const firebaseConfig = {
   measurementId: "G-6DMLPM9D2F",
 };
 
+const app = !firebase.apps.length
+  ? firebase.initializeApp(firebaseConfig)
+  : firebase.app();
 // Initialize Firebase
 
-const app = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
-const storage = getStorage(app);
-// console.log(storage);
-
+const db = app.firestore();
+const storage = firebase.storage();
 export { db, storage };

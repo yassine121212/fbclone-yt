@@ -8,18 +8,7 @@ import { EmojiHappyIcon } from "@heroicons/react/outline";
 import { CameraIcon, VideoCameraIcon } from "@heroicons/react/solid";
 import { useRef } from "react";
 import { db, storage } from "../firebase";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  setDoc,
-} from "firebase/firestore/lite";
-import {
-  getStorage,
-  ref,
-  uploadString,
-  getDownloadURL,
-} from "firebase/storage";
+import firebase from "firebase";
 
 function InputBox() {
   const [session] = useSession();
@@ -29,36 +18,44 @@ function InputBox() {
 
   const sendPost = async (e) => {
     e.preventDefault();
-    try {
-      const docRef = await addDoc(collection(db, "posts"), {
+    if (!inputRef.current.value) return;
+    db.collection("posts")
+      .add({
         message: inputRef.current.value,
         name: session.user.name,
         email: session.user.email,
         image: session.user.image,
-      }).then((docRef) => {
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+      .then((doc) => {
         if (imageToPost) {
-          // Get a reference to the storage service on Firebase Storage
-          const storage = getStorage();
-          // Create a storage reference form storage service
-          const storageRef = ref(storage, `posts/${docRef.id}`);
-
-          const uploadTask = uploadString(
-            storageRef,
-            imageToPost,
-            "data_url"
-          ).then((snapshot) => {
-            getDownloadURL(storageRef).then((downloadURL) => {
-              setDoc(docRef, { postImage: downloadURL }, { merge: true });
-            });
-          });
-
-          console.log("uploaded");
+          const uploadTask = storage
+            .ref(`posts/${doc.id}`)
+            .putString(imageToPost, "data_url");
           removeImage();
+
+          uploadTask.on(
+            "state_change",
+            null,
+            (error) => console.error(error),
+            () => {
+              // When the upload completes
+              storage
+                .ref("posts")
+                .child(doc.id)
+                .getDownloadURL()
+                .then((url) => {
+                  db.collection("posts").doc(doc.id).set(
+                    {
+                      postImage: url,
+                    },
+                    { merge: true }
+                  );
+                });
+            }
+          );
         }
       });
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
 
     inputRef.current.value = "";
   };
