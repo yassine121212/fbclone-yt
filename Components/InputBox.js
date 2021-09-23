@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 import React from "react";
 import { useState } from "react";
-import Image from "next/Image";
+import Image from "next/image";
 import { useSession } from "next-auth/client";
 import { EmojiHappyIcon } from "@heroicons/react/outline";
 import { CameraIcon, VideoCameraIcon } from "@heroicons/react/solid";
