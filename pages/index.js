@@ -1,12 +1,12 @@
 import Head from "next/head";
 import Image from "next/image";
-import Header from "../components/Header";
-import Login from "../components/Login";
-import Sidebar from "../components/Sidebar";
-import Widgets from "../components/Widgets";
+import Header from "../Components/Header";
+import Login from "../Components/Login";
+import Sidebar from "../Components/Sidebar";
+import Widgets from "../Components/Widgets";
 
 import { getSession } from "next-auth/client";
-import Feed from "../components/Feed";
+import Feed from "../Components/Feed";
 import { db } from "../firebase";
 
 export default function Home({ session, posts }) {
