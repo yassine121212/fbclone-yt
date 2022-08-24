@@ -5,40 +5,40 @@ import Contact from "./Contact";
 const contacts = [
   {
     id: 1,
-    src: "https://links.papareact.com/f0p",
-    name: "James Bond",
+    src: "https://i.pravatar.cc/150?img=65",
+    name: "Polo Arwando",
   },
   {
     id: 2,
-    src: "https://links.papareact.com/f0p",
-    name: "James Bond",
+    src: "https://i.pravatar.cc/150?img=32",
+    name: "Kili Soni",
   },
   {
     id: 3,
-    src: "https://links.papareact.com/f0p",
-    name: "James Bond",
+    src: "https://i.pravatar.cc/150?img=56",
+    name: "Moha Bores",
   },
   {
     id: 4,
-    src: "https://links.papareact.com/f0p",
-    name: "James Bond",
+    src: "https://i.pravatar.cc/150?img=31",
+    name: "Amanda rony",
   },
   {
     id: 5,
-    src: "https://links.papareact.com/f0p",
-    name: "James Bond",
+    src: "https://i.pravatar.cc/150?img=33",
+    name: "ling Yu",
   },
   {
     id: 6,
-    src: "https://links.papareact.com/f0p",
-    name: "James Bond",
+    src: "https://i.pravatar.cc/150?img=61",
+    name: "miki rokes",
   },
 ];
 
 function Widgets() {
   return (
     <div className=''>
-      <div className='flex justify-between items-center text-gray-500 mb-5'>
+      <div className='flex justify-between items-center gap-8 text-gray-500 mb-5'>
         <h2 className='text-xl'>Contacts</h2>
         <div className='flex space-x-2'>
           <VideoCameraIcon className='h-6' />
